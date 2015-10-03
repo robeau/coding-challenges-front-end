@@ -1,0 +1,50 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Sign Up</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-centered">
+            <form novalidate name="userForm" class="navbar-form" action="/home" method="post">
+                <div class="form-group">
+                    <div>
+                        <div class="input-group"><h4>Username</h4>
+                            <p class="red" ng-show="userForm.username.$touched && userForm.username.$invalid">Your username must be an email address.</p>
+                            <p class="red" ng-show="userForm.username.$error.maxlength">Username is too long.</p>
+                            <span><input ng-model="user.username" ng-keyup="$event.keyCode == 13 && addUser()" ng-maxlength="56" type="email" class="form-control" name="username" placeholder="Username" required /></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-group"><h4>Password</h4>
+                            <p class="red" ng-show="userForm.password.$touched && userForm.password.$error.minlength">Password must be at least 6 characters long.</p>
+                            <p class="red" ng-show="userForm.passwordConfirm.$dirty && nomatch">Passwords must match!</p>
+                            <span><input ng-model="user.password" ng-keyup="$event.keyCode == 13 && addUser()" ng-minlength="6" type="password" ng-blur="matchPass()" class="form-control" name="password" placeholder="Password" required/></span><span><input type="password" ng-model="passwordConfirm" ng-blur="matchPass()" class="form-control" name="passwordConfirm" placeholder="Confirm password" required /></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-group"><h4>Name</h4>
+                            <p class="red" ng-show="userForm.firstName.$error.maxlength">First name is too long.</p>
+                            <p class="red" ng-show="userForm.lastName.$error.maxlength">Last name is too long.</p>
+                            <p class="red" ng-show="userForm.firstName.$error.pattern || userForm.lastName.$error.pattern">Name may contain letters only.</p>
+                            <span><input ng-model="user.firstName" ng-keyup="$event.keyCode == 13 && addUser()" ng-pattern="/^[a-zA-Z]*$/" ng-maxlength="50" type="text" class="form-control" name="firstName" placeholder="First Name" required /></span>
+                            <span><input ng-model="user.lastName" ng-keyup="$event.keyCode == 13 && addUser()" ng-pattern="/^[a-zA-Z]*$/" ng-maxlength="50" type="text" class="form-control" name="lastName" placeholder="Last Name (Optional)"/></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-group"><h4>Birthday</h4>
+                            <p class="red" ng-show="userForm.birthday.$error.min || userForm.birthday.$error.max">Must be between 14 and 150 years old.</p>
+                            <span><input ng-model="user.birthday" ng-keyup="$event.keyCode == 13 && addUser()" type="date" class="form-control" name="birthday" placeholder="Birthday" ng-min="minDate()" ng-max="maxDate()" required/></span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-info btn-form" ng-click="addUser();" ng-disabled="userDisabled(userForm.username.$invalid,userForm.password.$invalid,nomatch,userForm.firstName.$invalid,userForm.lastName.$invalid,userForm.birthday.$invalid)">Sign Up</button>
+                    <button type="button" class="btn btn-default" ng-click="reallyClear($event);">Clear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 red">{{message}}</div>
+        <div class="col-md-12 blue" ng-show="processing">Adding user...</div>
+    </div>
+</div>

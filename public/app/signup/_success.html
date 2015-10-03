@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12"><h3>Success!</h3><p>You've signed up. You can update your bio and interests below.</p></div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Username:</h4>
+            <p>{{user.username}}</p>
+        </div>
+        <div class="col-md-4">
+            <h4>Name:</h4>
+            <p>{{user.firstName}} {{user.lastName}}</p>
+        </div>
+        <div class="col-md-4">
+            <h4>Birthday:</h4>
+            <p>{{prettyDate(user.birthday)| date : "MM/dd/yyyy"}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 ">
+            <form novalidate name="buddyForm" class="navbar-form" action="/home" method="post">
+                <div class="form-group">
+                    <div>
+                        <div class="input-group"><h4>Bio</h4>
+                            <span><textarea ng-model="user.bio" class="form-control success" name="bio" placeholder="Bio"/></span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="input-group"><h4>Interests</h4>
+                            <span><textarea ng-model="user.interests" class="form-control success" name="interests" placeholder="Interests"/></span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-info btn-form" ng-click="updateUser();">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 blue" ng-show="processing">Updating user information...</div>
+    </div>
+</div>

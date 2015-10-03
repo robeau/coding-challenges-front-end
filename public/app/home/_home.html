@@ -1,0 +1,83 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-centered">
+            <h3>The Buddy List</h3>
+            <p>Add and prioritize buddies!<button class="btn btn-default glyphicon glyphicon-menu-hamburger" id="menu-button" ng-show="buddyList.length" ng-click="sorting=!sorting"></button></p>
+        </div>
+    <div class="row" ng-init="getBuddies()">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="row row-centered" ng-show="sorting">
+                    <div class="btn-group col-centered" role="group">
+                        <button type="button" class="btn btn-default" ng-click="orderByField='username'; reverseSort=!reverseSort">Username</button>
+                        <button type="button" class="btn btn-default" ng-click="orderByField='firstName'; reverseSort=!reverseSort">First Name</button>
+                        <button type="button" class="btn btn-default" ng-click="orderByField='lastName'; reverseSort=!reverseSort">Last Name</button>
+                        <button type="button" class="btn btn-default" ng-click="orderByField='status'; reverseSort=!reverseSort">Status</button>
+                        <button type="button" class="btn btn-default" ng-click="orderByField='email'; reverseSort=!reverseSort">Email</button>
+                        <button type="button" class="btn btn-default" ng-click="orderByField='birthday'; reverseSort=!reverseSort">Birthday</button>
+                        <button type="button" class="btn btn-default" ng-click="orderByField='priority'; reverseSort=!reverseSort">Priority</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cardholder col-md-12">
+                            <div ng-hide="buddyList.length"><p>Loading your buddy list...</p><p>It may take several moments for the mongoLab database to warm up.</p></div>
+                        <div ng-show="buddyList.length">
+                            <div ng-show="sorting"><input type="text" class="form-control" ng-model="buddy" placeholder="Start typing to search all fields" /></div>
+                            <div class="buddycard noselect" ng-repeat="bud in buddyList|filter:buddy|orderBy:orderByField:reverseSort" ng-click="bud.open=!bud.open">
+                                <div class="row">
+                                    <div class="col-md-6"><div class="buddycard-username">{{bud.username}}</div><div class="buddycard-name">{{bud.firstName}} {{bud.lastName}}</div></div>
+                                    <div class="col-md-6">
+                                        <span class="buddycard-status" ng-style="checkStatus(bud.status)">{{bud.status}}<span ng-show="bud.status === 'Offline' && bud.open"> since {{prettyDate(bud.lastOnline) | date : "h:mma ' on ' MM/dd/yyyy"}}</span></span>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="bud.open">
+                                    <div class="col-md-12"><span class="buddycard-email">Email: {{bud.email}}</span><span class="buddycard-birthday">Birthday: {{prettyDate(bud.birthday) | date : "MM/dd/yyyy"}}</span></div>
+                                    <div class="col-md-12"><p class="buddycard-bio">Bio: {{bud.bio}}</p>
+                                        <p class="buddycard-delete"><span class="glyphicon glyphicon-remove red" ng-click="deleteBuddy(bud.username, $event);"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="buddycard" ng-show="processingBuddy"><p>Updating buddies...</p><p>It may take several moments for the mongoLab DB to load.</p></div>
+                            <button class="btn btn-info" ng-click="adding=!adding;" ng-hide="adding"><span class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                        <div class="row row-centered" ng-show="adding">
+                            <form novalidate name="buddyForm" class="navbar-form" action="/home" method="post">
+                                <div class="form-group">
+                                    <div>
+                                        <div class="input-group">
+                                            <span><input ng-model="newBuddy.username" type="text" class="form-control" name="username" placeholder="Username"/></span>
+                                            <span><input ng-model="newBuddy.email" type="email" class="form-control" name="email" placeholder="Email"/></span>
+                                            <p class="red" ng-show="buddyForm.email.$dirty && buddyForm.email.$touched && buddyForm.email.$invalid">Email is invalid</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="input-group">
+                                            <span><input ng-model="newBuddy.firstName" type="text" class="form-control" name="firstName" placeholder="First Name"/></span>
+                                            <span><input ng-model="newBuddy.lastName" type="text" class="form-control" name="lastName" placeholder="Last Name"/></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon1">DOB</span>
+                                            <span><input ng-model="newBuddy.birthday" type="date" class="form-control" name="birthday" placeholder="Birthday" aria-describedby="basic-addon1"/></span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="input-group">
+                                            <span><textarea ng-model="newBuddy.bio" class="form-control" name="bio" placeholder="Bio"/></span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-info btn-form" ng-click="addBuddy(); adding=!adding" ng-disabled="buddyForm.email.$pristine || buddyForm.username.$pristine || buddyForm.email.$invalid">Add Buddy</button>
+                                    <button type="button" class="btn btn-default btn-form" ng-click="adding=!adding">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+        </div>
+
+    </div>
+    <div class="row row-centered">
+        <div class="col-md-12 col-centered red">{{message}}</div>
+    </div>
+</div>
