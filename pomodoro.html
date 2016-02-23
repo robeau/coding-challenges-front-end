@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1">
+  <title>Pomodoro Timer</title>
+  <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <style>
+    div#pomodoro {
+      position: relative;
+      height: 500px;
+      width: 500px;
+      background-color: CornflowerBlue;
+      margin: 0 auto;
+      border-radius: 50%;
+    }
+    div#display {
+      position: absolute;
+      height: 100px;
+      width: 100%;
+      font-size: 6em;
+      left: 80px;
+      top: 200px;
+      color: navy;
+    }
+    div#display-break {
+      position: absolute;
+      height: 50px;
+      width: 100%;
+      font-size: 3em;
+      left: 170px;
+      bottom: 25px;
+      color: navy;
+    }
+    a.pom-btn {
+      color: white;
+      font-size: 55px;
+    }
+    a.break-btn {
+      color: white;
+      font-size: 25px;
+    }
+    div#pom-ctrls {
+      position: absolute;
+      left: 108px;
+      top: -70px;
+    }
+    div#break-ctrls {
+      position: absolute;
+      left: 55px;
+      bottom: -35px;
+    }
+  </style>
+</head>
+  <div class="container">
+      <div id="pomodoro">
+        <div id="display">
+          <span id="time"></span>
+          <div id="pom-ctrls">
+            <a id="pom-minus" href="#" class="pom-btn" role="button"><i class="fa fa-minus"></i></a>
+            <a id="pom-plus" href="#" class="pom-btn" role="button"><i class="fa fa-plus"></i></a>
+          </div>
+        </div>
+        <div id="display-break">
+          <span id="time-break"></span>
+          <div id="break-ctrls">
+            <a id="break-minus" href="#" class="break-btn" role="button"><i class="fa fa-minus"></i></a>
+            <a id="break-plus" href="#" class="break-btn" role="button"><i class="fa fa-plus"></i></a>
+          </div>
+        </div>
+      </div>
+  </div>
+<body>
+  <script>
+  var s = start(), breaking = false;
+
+  $(function(){
+    console.log('hello from jquery');
+    $('#time').html('00:25:00');
+    $('#time-break').html('00:05:00');
+
+    $('#pom-plus').on("click", {
+      value: 1
+    }, pomChange);
+
+    $('#pom-minus').on("click", {
+      value: -1
+    }, pomChange);
+
+    $('#break-plus').on("click", {
+      value: 1
+    }, breakChange);
+
+    $('#break-minus').on("click", {
+      value: -1
+    }, breakChange);
+  });
+
+  function start() {
+     var i = setInterval(tick, 1000);
+     return i;
+  }
+
+  function pause() {
+    clearInterval(s);
+  }
+
+  function tick (timeArr, elStr) {
+    var el;
+
+    if(elStr) el = $('#' + elStr);
+    else if(breaking) el = $('#time-break');
+    else el = $('#time')
+
+    var str = el.html(), hour = +str.substr(0,2), minute = +str.substr(3,2), second = +str.substr(6,2), timeStr = [];
+
+    if(timeArr) {
+      hour += timeArr[0];
+      if(minute + timeArr[1] >= 60) {
+        minute += timeArr[1] - 60;
+        hour++;
+      }
+      else if(minute + timeArr[1] < 0) {
+        if(hour) minute += timeArr[1] + 60;
+        if(hour) hour--;
+      }
+      else minute += timeArr[1];
+      second += timeArr[2];
+    }
+
+    if(second > 0) second--;
+    else second = 59;
+
+    if(second === 59) {
+      if(minute > 0) minute--;
+      else minute = 59;
+    }
+
+    if(minute === 59) {
+      if(hour > 0) hour--;
+    }
+
+    timeStr.push(hour.toString());
+    timeStr.push(minute.toString());
+    timeStr.push(second.toString());
+
+    for(var i = 0; i < 3; i++) {
+      if(timeStr[i].length === 1) {
+        timeStr[i] = "0" + timeStr[i];
+      }
+    }
+
+    el.html(timeStr[0] + ':' + timeStr[1] + ':' + timeStr[2]);
+
+    if(hour + minute + second === 0) {
+      if(breaking) el.html('00:05:00');
+      else el.html('00:25:00');
+
+      breaking = !breaking;
+    }
+  }
+
+  function pomChange(event) {
+      pause();
+      tick([0,event.data.value,1], "time");
+      s = start();
+  }
+
+  function breakChange(event) {
+      pause();
+      tick([0,event.data.value,1], "time-break");
+      s = start();
+  }
+  </script>
+</body>
+</html>
